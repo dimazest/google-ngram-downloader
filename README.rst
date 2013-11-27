@@ -2,10 +2,11 @@
  Google ngram downloader
 =========================
 
-.. image:: https://travis-ci.org/dimazest/google-ngram-downloader.png?branch=master   :target: https://travis-ci.org/dimazest/google-ngram-downloader
+.. image:: https://travis-ci.org/dimazest/google-ngram-downloader.png?branch=master
+    :target: https://travis-ci.org/dimazest/google-ngram-downloader
 
 .. image:: https://coveralls.io/repos/dimazest/google-ngram-downloader/badge.png?branch=master
-  :target: https://coveralls.io/r/dimazest/google-ngram-downloader?branch=master
+    :target: https://coveralls.io/r/dimazest/google-ngram-downloader?branch=master
 
 `The Google Books Ngram Viewer dataset`__ is a freely available resource under
 a `Creative Commons Attribution 3.0 Unported License`__ which provides ngram
