@@ -27,9 +27,9 @@ long_description = (
 
 
 setup(
-    name='google_ngram_downloader',
-    version='0.1',
-    description='',
+    name='google-ngram-downloader',
+    version='1',
+    description='The streaming access to the Google ngram data.',
     long_description=long_description,
     # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[

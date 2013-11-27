@@ -15,6 +15,16 @@ Record = namedtuple('Record', 'ngram year match_count volume_count')
 
 
 def readline_google_store(ngram_len, chunk_size=512, verbose=False):
+    """Iterate over the data in the Google ngram collectioin.
+
+        :param int ngram_len: the length of ngrams to be streamed.
+        :param int chunk_size: the size the chunks of raw compressed data.
+        :param bool verbose: if `True`, then the debug information is shown to
+        `sys.stderr`.
+
+        :returns: a iterator over triples `(fname, url, records)`
+
+    """
     for fname, url, request in iter_google_store(ngram_len, verbose=verbose):
         dec = zlib.decompressobj(wbits=16 + zlib.MAX_WBITS)
 
@@ -27,7 +37,9 @@ def readline_google_store(ngram_len, chunk_size=512, verbose=False):
                 lines, last = lines[:-1], lines[-1]
 
                 for line in lines:
-                    yield Record(*line.decode('utf-8').split('\t'))
+                    data = line.decode('utf-8').split('\t')
+                    data[1:] = map(int, data[1:])
+                    yield Record(*data)
 
             assert not last
 
