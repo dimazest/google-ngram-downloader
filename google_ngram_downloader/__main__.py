@@ -1,9 +1,14 @@
+import json
 import sys
 
-from opster import command
+from opster import Dispatcher
 from py.path import local
 
-from .util import iter_google_store
+from .util import iter_google_store, readline_google_store, count_coccurrence
+
+
+dispatcher = Dispatcher()
+command = dispatcher.command
 
 
 @command()
@@ -24,3 +29,30 @@ def download(
                         sys.stderr.write('.')
                         sys.stderr.flush()
                     f.write(chunk)
+
+
+@command()
+def cooccurrence(
+    ngram_len=('n', 2, 'The length of ngrams to be downloaded.'),
+    output=('o', 'downloads/google_ngrams/{ngram_len}_cooccurrence_matrix/', 'The destination folder for downloaded files.'),
+    verbose=('v', False, 'Be verbose.'),
+    n_jobs=('j', 0, 'The number of paralles jobs. Set to 0 to use all CPUs.'),
+    rewrite=('r', False, 'Always rewrite existing files.')
+):
+    """Build a cooccurrence matrix based on ngram data."""
+    assert ngram_len > 1
+    middle_index = ngram_len // 2
+    output_dir = local(output.format(ngram_len=ngram_len))
+    output_dir.ensure_dir()
+
+    for fname, _, records in readline_google_store(ngram_len, verbose=verbose):
+        output_file = output_dir.join(fname + '.json')
+
+        if verbose and not rewrite and output_file.check():
+            print('Skipping {}'.format(output_file))
+            continue
+
+        cooccurrence = count_coccurrence(records, middle_index)
+
+        with output_file.open('w') as f:
+            json.dump(cooccurrence.items(), f, indent=True)

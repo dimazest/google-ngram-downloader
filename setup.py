@@ -58,7 +58,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'google-ngram-downloader = google_ngram_downloader.__main__:download.command',
+            'google-ngram-downloader = google_ngram_downloader.__main__:dispatcher.dispatch',
         ],
     },
     tests_require=['tox'],

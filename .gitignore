@@ -8,3 +8,5 @@
 .tox/*
 .cache/*
 dist/*
+.env/*
+downloads/*

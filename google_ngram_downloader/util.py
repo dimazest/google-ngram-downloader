@@ -1,21 +1,21 @@
 import sys
 import zlib
-from multiprocessing import Pool, cpu_count
-
-from collections import namedtuple
-from itertools import product, chain
+from collections import namedtuple, Counter
+from itertools import product, chain, groupby
 from string import ascii_lowercase, digits
 
 import requests
 
 URL_TEMPLATE = 'http://storage.googleapis.com/books/ngrams/books/{}'
+# URL_TEMPLATE = 'http://localhost:8001/{}'
+
 FILE_TEMPLATE = 'googlebooks-eng-all-{ngram_len}gram-{version}-{index}.gz'
 
 
 Record = namedtuple('Record', 'ngram year match_count volume_count')
 
 
-def readline_google_store(ngram_len, chunk_size=512, verbose=False):
+def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
     """Iterate over the data in the Google ngram collectioin.
 
         :param int ngram_len: the length of ngrams to be streamed.
@@ -26,24 +26,25 @@ def readline_google_store(ngram_len, chunk_size=512, verbose=False):
         :returns: a iterator over triples `(fname, url, records)`
 
     """
-    pool = Pool(processes=None)
 
     for fname, url, request in iter_google_store(ngram_len, verbose=verbose):
         dec = zlib.decompressobj(wbits=16 + zlib.MAX_WBITS)
 
         def lines():
             last = b''
-            for compressed_chunk in request.iter_content(chunk_size=chunk_size):
+            compressed_chunks = request.iter_content(chunk_size=chunk_size)
+
+            for i, compressed_chunk in enumerate(compressed_chunks):
                 chunk = dec.decompress(compressed_chunk)
 
                 lines = (last + chunk).split(b'\n')  # noqa
                 lines, last = lines[:-1], lines[-1]
 
-                pool_chunk_size = len(lines) // cpu_count()
-                records = pool.imap_unordered(process_line, lines, chunksize=pool_chunk_size)
-
-                for record in records:
-                    yield record
+                for line in lines:
+                    data = line.split(b'\t')
+                    ngram = data[0]
+                    other = map(int, data[1:])
+                    yield Record(ngram, *other)
 
             assert not last
 
@@ -54,6 +55,25 @@ def process_line(line):
     data = line.decode('utf-8').split('\t')
     data[1:] = map(int, data[1:])
     return Record(*data)
+
+
+def ngram_to_cooc(ngram, count, middle_index):
+    ngram = ngram.split()
+    # Filter out any annotations. E.g. removes `_NUM` from  `+32_NUM`
+    ngram = tuple(n.split(b'_')[0] for n in ngram)
+
+    item = ngram[middle_index]
+    context = ngram[:middle_index] + ngram[middle_index + 1:]
+
+    return tuple((p, count) for p in product([item], context))
+
+
+def count_coccurrence(records, middle_index):
+    grouped_records = groupby(records, key=lambda r: r.ngram)
+    ngram_counts = ((ngram, sum(r.match_count for r in records)) for ngram, records in grouped_records)
+    cooc = (ngram_to_cooc(ngram, count, middle_index) for ngram, count in ngram_counts)
+    x = dict(chain.from_iterable(cooc))
+    return Counter(x)
 
 
 def iter_google_store(ngram_len, verbose=False):
