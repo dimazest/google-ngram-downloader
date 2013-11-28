@@ -1,5 +1,6 @@
 import sys
 import zlib
+from multiprocessing import Pool, cpu_count
 
 from collections import namedtuple
 from itertools import product, chain
@@ -25,6 +26,8 @@ def readline_google_store(ngram_len, chunk_size=512, verbose=False):
         :returns: a iterator over triples `(fname, url, records)`
 
     """
+    pool = Pool(processes=None)
+
     for fname, url, request in iter_google_store(ngram_len, verbose=verbose):
         dec = zlib.decompressobj(wbits=16 + zlib.MAX_WBITS)
 
@@ -36,14 +39,21 @@ def readline_google_store(ngram_len, chunk_size=512, verbose=False):
                 lines = (last + chunk).split(b'\n')  # noqa
                 lines, last = lines[:-1], lines[-1]
 
-                for line in lines:
-                    data = line.decode('utf-8').split('\t')
-                    data[1:] = map(int, data[1:])
-                    yield Record(*data)
+                pool_chunk_size = len(lines) // cpu_count()
+                records = pool.imap_unordered(process_line, lines, chunksize=pool_chunk_size)
+
+                for record in records:
+                    yield record
 
             assert not last
 
         yield fname, url, lines()
+
+
+def process_line(line):
+    data = line.decode('utf-8').split('\t')
+    data[1:] = map(int, data[1:])
+    return Record(*data)
 
 
 def iter_google_store(ngram_len, verbose=False):
