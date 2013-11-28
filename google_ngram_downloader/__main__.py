@@ -1,5 +1,6 @@
 import json
 import sys
+import gzip
 
 from opster import Dispatcher
 from py.path import local
@@ -23,12 +24,11 @@ def download(
 
     for fname, url, request in iter_google_store(ngram_len, verbose=verbose):
         with output.join(fname).open('wb') as f:
-
             for num, chunk in enumerate(request.iter_content(1024)):
-                    if verbose and not divmod(num, 1024)[1]:
-                        sys.stderr.write('.')
-                        sys.stderr.flush()
-                    f.write(chunk)
+                if verbose and not divmod(num, 1024)[1]:
+                    sys.stderr.write('.')
+                    sys.stderr.flush()
+                f.write(chunk)
 
 
 @command()
@@ -46,13 +46,14 @@ def cooccurrence(
     output_dir.ensure_dir()
 
     for fname, _, records in readline_google_store(ngram_len, verbose=verbose):
-        output_file = output_dir.join(fname + '.json')
+        output_file = output_dir.join(fname + '.json.gz')
 
-        if verbose and not rewrite and output_file.check():
-            print('Skipping {}'.format(output_file))
+        if not rewrite and output_file.check():
+            if verbose:
+                print('Skipping {}'.format(output_file))
             continue
 
         cooccurrence = count_coccurrence(records, middle_index)
 
-        with output_file.open('w') as f:
+        with gzip.open(str(output_file), 'wt') as f:
             json.dump(cooccurrence.items(), f, indent=True)
