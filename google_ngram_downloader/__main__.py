@@ -41,11 +41,11 @@ def cooccurrence(
 ):
     """Build a cooccurrence matrix based on ngram data."""
     assert ngram_len > 1
-    middle_index = ngram_len // 2
     output_dir = local(output.format(ngram_len=ngram_len))
     output_dir.ensure_dir()
 
     for fname, _, records in readline_google_store(ngram_len, verbose=verbose):
+        index = {}
         output_file = output_dir.join(fname + '.json.gz')
 
         if not rewrite and output_file.check():
@@ -53,7 +53,8 @@ def cooccurrence(
                 print('Skipping {}'.format(output_file))
             continue
 
-        cooccurrence = count_coccurrence(records, middle_index)
+        cooccurrence = count_coccurrence(records, index)
 
+        items = [((index[i], index[c]), v) for (i, c), v in cooccurrence.items()]
         with gzip.open(str(output_file), 'wt') as f:
-            json.dump(cooccurrence.items(), f, indent=True)
+            json.dump(items, f, indent=True)

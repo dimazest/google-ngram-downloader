@@ -62,27 +62,40 @@ def test_download(capsys, tmpdir, monkeypatch, verbose, err_len):
 
 
 @pytest.mark.parametrize(
-    ('ngram', 'result'),
+    ('ngram', 'expected_result', 'index'),
     (
         (
             'aa_SOME_GARBAGE ab BB zz yz',
             (
-                (('BB', 'aa'), 3),
-                (('BB', 'ab'), 3),
-                (('BB', 'zz'), 3),
-                (('BB', 'yz'), 3),
+                ((0, 1), 3),
+                ((0, 2), 3),
+                ((0, 3), 3),
+                ((0, 4), 3),
             ),
+            {'BB': 0, 'aa': 1, 'ab': 2, 'zz': 3, 'yz': 4},
+        ),
+        (
+            'aa yz BB yz yz',
+            (
+                ((0, 1), 3),
+                ((0, 2), 3),
+                ((0, 2), 3),
+                ((0, 2), 3),
+            ),
+            {'BB': 0, 'aa': 1},
         ),
     ),
 )
-def test_ngrams_to_cooc(ngram, result):
-    assert ngram_to_cooc(ngram, 3, 2) == result
+def test_ngrams_to_cooc(ngram, expected_result, index):
+    result = ngram_to_cooc(ngram, 3, index)
+    assert result == expected_result
 
 
 def test_count_coccurrence(records):
-    assert count_coccurrence(records, 1) == {
-        ('BB', 'a'): 1110,
-        ('BB', 'z'): 1110,
-        ('ABCDEFG', 'a'): 222,
-        ('ABCDEFG', 'z'): 222,
+    index = {}
+    assert count_coccurrence(records, index) == {
+        (index['BB'], index['a']): 1110,
+        (index['BB'], index['z']): 1110,
+        (index['ABCDEFG'], index['a']): 222,
+        (index['ABCDEFG'], index['z']): 222,
     }

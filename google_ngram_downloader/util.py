@@ -1,10 +1,11 @@
+import collections
 import sys
 import zlib
-from collections import namedtuple, Counter
 from itertools import product, chain, groupby
 from string import ascii_lowercase, digits
 
 import requests
+
 
 URL_TEMPLATE = 'http://storage.googleapis.com/books/ngrams/books/{}'
 # URL_TEMPLATE = 'http://localhost:8001/{}'
@@ -12,7 +13,7 @@ URL_TEMPLATE = 'http://storage.googleapis.com/books/ngrams/books/{}'
 FILE_TEMPLATE = 'googlebooks-eng-all-{ngram_len}gram-{version}-{index}.gz'
 
 
-Record = namedtuple('Record', 'ngram year match_count volume_count')
+Record = collections.namedtuple('Record', 'ngram year match_count volume_count')
 
 
 def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
@@ -37,7 +38,7 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
             for i, compressed_chunk in enumerate(compressed_chunks):
                 chunk = dec.decompress(compressed_chunk)
 
-                lines = (last + chunk).split(b'\n')  # noqa
+                lines = (last + chunk).split(b'\n')
                 lines, last = lines[:-1], lines[-1]
 
                 for line in lines:
@@ -51,29 +52,35 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
         yield fname, url, lines()
 
 
-def process_line(line):
-    data = line.decode('utf-8').split('\t')
-    data[1:] = map(int, data[1:])
-    return Record(*data)
-
-
-def ngram_to_cooc(ngram, count, middle_index):
+def ngram_to_cooc(ngram, count, index):
     ngram = ngram.split()
     # Filter out any annotations. E.g. removes `_NUM` from  `+32_NUM`
-    ngram = tuple(n.split(b'_')[0] for n in ngram)
+    ngram = tuple(n.split('_')[0] for n in ngram)
 
+    middle_index = len(ngram) // 2
     item = ngram[middle_index]
     context = ngram[:middle_index] + ngram[middle_index + 1:]
 
-    return tuple((p, count) for p in product([item], context))
+    item_id = word_to_id(item, index)
+    context_ids = (word_to_id(c, index) for c in context)
+
+    return tuple((p, count) for p in product([item_id], context_ids))
 
 
-def count_coccurrence(records, middle_index):
+def word_to_id(word, index):
+    try:
+        return index[word]
+    except KeyError:
+        id_ = len(index)
+        index[word] = id_
+        return id_
+
+
+def count_coccurrence(records, index):
     grouped_records = groupby(records, key=lambda r: r.ngram)
     ngram_counts = ((ngram, sum(r.match_count for r in records)) for ngram, records in grouped_records)
-    cooc = (ngram_to_cooc(ngram, count, middle_index) for ngram, count in ngram_counts)
-    x = dict(chain.from_iterable(cooc))
-    return Counter(x)
+    cooc = (ngram_to_cooc(ngram, count, index) for ngram, count in ngram_counts)
+    return collections.Counter(dict(chain.from_iterable(cooc)))
 
 
 def iter_google_store(ngram_len, verbose=False):
