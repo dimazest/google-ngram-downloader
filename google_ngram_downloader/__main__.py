@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 from opster import Dispatcher
 from py.path import local
+from pytrie import SortedStringTrie
 
 from .util import iter_google_store, readline_google_store, count_coccurrence
 
@@ -53,7 +54,7 @@ def cooccurrence(
                 print('Skipping {}'.format(output_file))
             continue
 
-        index = OrderedDict()
+        index = SortedStringTrie()
         cooccurrence = count_coccurrence(records, index)
 
         id2word = list(index)
