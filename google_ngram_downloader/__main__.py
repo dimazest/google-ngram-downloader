@@ -1,6 +1,7 @@
 import json
 import sys
 import gzip
+from collections import OrderedDict
 
 from opster import Dispatcher
 from py.path import local
@@ -45,7 +46,6 @@ def cooccurrence(
     output_dir.ensure_dir()
 
     for fname, _, records in readline_google_store(ngram_len, verbose=verbose):
-        index = {}
         output_file = output_dir.join(fname + '.json.gz')
 
         if not rewrite and output_file.check():
@@ -53,8 +53,10 @@ def cooccurrence(
                 print('Skipping {}'.format(output_file))
             continue
 
+        index = OrderedDict()
         cooccurrence = count_coccurrence(records, index)
 
-        items = [((index[i], index[c]), v) for (i, c), v in cooccurrence.items()]
+        id2word = list(index)
+        items = [((id2word[i], id2word[c]), v) for (i, c), v in cooccurrence.items()]
         with gzip.open(str(output_file), 'wt') as f:
             json.dump(items, f, indent=True)
