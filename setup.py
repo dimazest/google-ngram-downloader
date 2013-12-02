@@ -54,6 +54,7 @@ setup(
     install_requires=[
         'opster',
         'py',
+        'PyTrie',
         'requests',
     ],
     entry_points={
