@@ -43,6 +43,7 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
 
                 for line in lines:
                     data = line.split(b'\t')
+                    assert len(data) == 4
                     ngram = data[0]
                     other = map(int, data[1:])
                     yield Record(ngram, *other)
@@ -53,6 +54,7 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
 
 
 def ngram_to_cooc(ngram, count, index):
+    ngram = ngram.decode('utf-8')
     ngram = ngram.split()
     # Filter out any annotations. E.g. removes `_NUM` from  `+32_NUM`
     ngram = tuple(n.split('_')[0] for n in ngram)

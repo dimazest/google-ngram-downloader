@@ -51,13 +51,13 @@ def bigrams_indices():
 @pytest.fixture
 def records():
     return (
-        Record('a BB z', 1987, 10, 1),
-        Record('a BB z', 1988, 100, 1),
-        Record('a BB z', 1989, 1000, 1),
-        Record('a ABCDEFG z', 1989, 222, 1),
+        Record(b'a BB z', 1987, 10, 1),
+        Record(b'a BB z', 1988, 100, 1),
+        Record(b'a BB z', 1989, 1000, 1),
+        Record(b'a ABCDEFG z', 1989, 222, 1),
     )
 
 
 @pytest.fixture
 def ngram():
-    return 'aa ab BB zz zz'
+    return b'aa ab BB zz zz'

@@ -2,10 +2,10 @@ import json
 import sys
 import gzip
 from collections import OrderedDict
+from itertools import islice
 
 from opster import Dispatcher
 from py.path import local
-from pytrie import SortedStringTrie
 
 from .util import iter_google_store, readline_google_store, count_coccurrence
 
@@ -38,26 +38,41 @@ def cooccurrence(
     ngram_len=('n', 2, 'The length of ngrams to be downloaded.'),
     output=('o', 'downloads/google_ngrams/{ngram_len}_cooccurrence_matrix/', 'The destination folder for downloaded files.'),
     verbose=('v', False, 'Be verbose.'),
-    n_jobs=('j', 0, 'The number of paralles jobs. Set to 0 to use all CPUs.'),
-    rewrite=('r', False, 'Always rewrite existing files.')
+    rewrite=('r', False, 'Always rewrite existing files.'),
+    records_in_file=('', 10 ** 9, 'The number of records to be read from the Google store to store in a .json.gz file.')
 ):
     """Build a cooccurrence matrix based on ngram data."""
     assert ngram_len > 1
     output_dir = local(output.format(ngram_len=ngram_len))
     output_dir.ensure_dir()
 
-    for fname, _, records in readline_google_store(ngram_len, verbose=verbose):
-        output_file = output_dir.join(fname + '.json.gz')
+    for fname, _, all_records in readline_google_store(ngram_len, verbose=verbose):
+        postfix = 0
+        while (True):
+            records = islice(all_records, records_in_file)
+            output_file = output_dir.join(
+                '{fname}_{postfix}.json.gz'.format(
+                    fname=fname,
+                    postfix=postfix,
+                )
+            )
 
-        if not rewrite and output_file.check():
-            if verbose:
-                print('Skipping {}'.format(output_file))
-            continue
+            if not rewrite and output_file.check():
+                if verbose:
+                    print('Skipping {} and the rest...'.format(output_file))
+                break
 
-        index = SortedStringTrie()
-        cooccurrence = count_coccurrence(records, index)
+            index = OrderedDict()
+            cooccurrence = count_coccurrence(records, index)
 
-        id2word = list(index)
-        items = [((id2word[i], id2word[c]), v) for (i, c), v in cooccurrence.items()]
-        with gzip.open(str(output_file), 'wt') as f:
-            json.dump(items, f, indent=True)
+            if not cooccurrence:
+                break
+
+            id2word = list(index)
+            items = [((id2word[i], id2word[c]), v) for (i, c), v in cooccurrence.items()]
+            with gzip.open(str(output_file), 'wt') as f:
+                if verbose:
+                    print('Writing {}'.format(output_file))
+                json.dump(items, f, indent=True)
+
+            postfix += 1
