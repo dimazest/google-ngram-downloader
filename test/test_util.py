@@ -21,6 +21,14 @@ def test_get_indices_manygrams(bigrams_indices):
     assert set(indices) == bigrams_indices
 
 
+def test_get_indices_5grams(bigrams_indices):
+    """Check that there is no "qk" index for 5grams."""
+    indices = list(get_indices(5))
+    assert len(indices) == len(set(bigrams_indices)) - 1
+
+    assert set(indices) == (bigrams_indices - set(['qk']))
+
+
 @pytest.mark.parametrize(
     ('ngram', 'expected_result', 'index'),
     (

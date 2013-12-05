@@ -44,6 +44,8 @@ def fake_request(urls, compressed_data, monkeypatch):
             def iter_content(self, chunk_size):
                 return iter(compressed_data)
 
+            status_code = 200
+
         return FakeRequest()
 
     monkeypatch.setattr(Session, 'get', mocked_get)
