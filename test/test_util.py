@@ -33,7 +33,7 @@ def test_get_indices_5grams(bigrams_indices):
     ('ngram', 'expected_result', 'index'),
     (
         (
-            b'aa_SOME_GARBAGE ab BB zz yz',
+            'aa_SOME_GARBAGE ab BB zz yz',
             (
                 ((0, 1), 3),
                 ((0, 2), 3),
@@ -43,7 +43,7 @@ def test_get_indices_5grams(bigrams_indices):
             {'BB': 0, 'aa': 1, 'ab': 2, 'zz': 3, 'yz': 4},
         ),
         (
-            b'aa yz BB yz yz',
+            'aa yz BB yz yz',
             (
                 ((0, 1), 3),
                 ((0, 2), 3),

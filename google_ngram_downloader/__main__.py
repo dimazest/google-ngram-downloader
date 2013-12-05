@@ -76,3 +76,14 @@ def cooccurrence(
                 json.dump(items, f, indent=True)
 
             postfix += 1
+
+
+@command()
+def readline(
+    ngram_len=('n', 2, 'The length of ngrams to be downloaded.'),
+):
+    """Print the raw content."""
+
+    for _, _, records in readline_google_store(ngram_len):
+        for record in records:
+            print('{ngram}\t{year}\t{match_count}\t{volume_count}'.format(**record._asdict()))

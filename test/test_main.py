@@ -12,7 +12,7 @@ import pytest
 
 @pytest.fixture
 def compressobj():
-    return zlib.compressobj(wbits=16 + zlib.MAX_WBITS)
+    return zlib.compressobj()
 
 
 @pytest.fixture

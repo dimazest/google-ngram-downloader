@@ -29,7 +29,7 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
     """
 
     for fname, url, request in iter_google_store(ngram_len, verbose=verbose):
-        dec = zlib.decompressobj(wbits=16 + zlib.MAX_WBITS)
+        dec = zlib.decompressobj(32 + zlib.MAX_WBITS)
 
         def lines():
             last = b''
@@ -42,7 +42,8 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
                 lines, last = lines[:-1], lines[-1]
 
                 for line in lines:
-                    data = line.split(b'\t')
+                    line = line.decode('utf-8')
+                    data = line.split('\t')
                     assert len(data) == 4
                     ngram = data[0]
                     other = map(int, data[1:])
@@ -54,7 +55,6 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
 
 
 def ngram_to_cooc(ngram, count, index):
-    ngram = ngram.decode('utf-8')
     ngram = ngram.split()
     # Filter out any annotations. E.g. removes `_NUM` from  `+32_NUM`
     ngram = tuple(n.split('_')[0] for n in ngram)
