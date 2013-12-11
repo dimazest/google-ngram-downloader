@@ -49,19 +49,7 @@ Installation
 The command line tool
 =====================
 
-It also provides a simple command line tool to download the ngrams::
-
-    $ google-ngram-downloader -h
-    google-ngram-downloader [OPTIONS] [NGRAM_LEN]
-
-    Download The Google Books Ngram Viewer dataset version 20120701.
-
-    options:
-
-     -n --ngram-len  The length of ngrams to be downloaded. (default: 1)
-     -o --output     The destination folder for downloaded files. (default:
-                     downloads/google_ngrams/{ngram_len})
-     -v --verbose    Be verbose.
-     -h --help       display help
+It also provides a simple command line tool to download the ngrams called
+`google-ngram-downloader`.
 
 
