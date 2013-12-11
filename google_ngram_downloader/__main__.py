@@ -1,6 +1,7 @@
+import codecs
+import gzip
 import json
 import sys
-import gzip
 from collections import OrderedDict
 from itertools import islice
 
@@ -84,6 +85,10 @@ def readline(
 ):
     """Print the raw content."""
 
+    # Always write utf8
+    sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+
     for _, _, records in readline_google_store(ngram_len):
         for record in records:
+            print(record)
             print('{ngram}\t{year}\t{match_count}\t{volume_count}'.format(**record._asdict()))

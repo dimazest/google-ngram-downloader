@@ -28,13 +28,14 @@ long_description = (
 
 setup(
     name='google-ngram-downloader',
-    version='3-dev',
+    version='3.0',
     description='The streaming access to the Google ngram data.',
     long_description=long_description,
     # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
@@ -48,7 +49,7 @@ setup(
     author_email='dimazest@gmail.com',
     url='https://github.com/dimazest/google-ngram-downloader',
     license='MIT license',
-    packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+    packages=find_packages(exclude=['ez_setup', 'examples', 'test']),
     include_package_data=True,
     zip_safe=False,
     install_requires=[
