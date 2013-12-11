@@ -35,7 +35,7 @@ Example use
 >>> url
 'http://storage.googleapis.com/books/ngrams/books/googlebooks-eng-all-5gram-20120701-0.gz'
 >>> next(records)
-Record(ngram='0 " A most useful', year=1860, match_count=1, volume_count=1)
+Record(ngram=u'0 " A most useful', year=1860, match_count=1, volume_count=1)
 
 
 Installation
