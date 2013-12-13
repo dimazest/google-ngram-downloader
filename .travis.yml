@@ -1,8 +1,5 @@
 language: python
 
-install:
-  - pip install python-coveralls
-
 script: python setup.py test
 
 after_success:
