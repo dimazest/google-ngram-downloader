@@ -43,7 +43,7 @@ Installation
 
 ::
 
-    pip intall google-ngram-downloader
+    pip install google-ngram-downloader
 
 
 The command line tool
