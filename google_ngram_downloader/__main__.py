@@ -51,7 +51,7 @@ def cooccurrence(
         while (True):
             records = islice(all_records, records_in_file)
             output_file = output_dir.join(
-                '{fname}_{postfix}.json.gz'.format(
+                '{fname}_{postfix}.gz'.format(
                     fname=fname,
                     postfix=postfix,
                 )
@@ -69,12 +69,13 @@ def cooccurrence(
                 break
 
             id2word = list(index)
-            items = ('\t'.join([id2word[i], id2word[c], str(v)]) for (i, c), v in cooccurrence.items())
+            items = (u'{}\t{}\t{}\n'.format(id2word[i], id2word[c], str(v)) for (i, c), v in cooccurrence.items())
 
             with gzip.open(str(output_file), 'wt') as f:
                 if verbose:
                     print('Writing {}'.format(output_file))
-                f.writelines(items)
+                for item in items:
+                    f.write(item.encode('utf8'))
 
             postfix += 1
 
