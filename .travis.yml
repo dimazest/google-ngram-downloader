@@ -1,8 +1,10 @@
 language: python
 
-script: python setup.py test
+install:
+  - pip install -r requirements-testing.txt -e .
+
+script: tox
 
 after_success:
-  - pip install -r requirements-testing.txt -e .
   - py.test --cov=google_ngram_downloader --cov-report=term-missing test
   - coveralls

@@ -100,9 +100,11 @@ def test_cooccurrence(tmpdir, monkeypatch):
         ).split()
     )
 
-    output_one, output_two = tmpdir.listdir()
-    with gzip.open(str(output_one)) as f:
-        result_one = f.read()
+    def read(f_name):
+        with gzip.open(str(f_name), mode='rb') as f:
+            return f.read().decode('utf-8')
+
+    result_one, result_two = map(read, tmpdir.listdir())
 
     assert result_one == (
         'often\tanalysis\t6\n'
@@ -110,9 +112,6 @@ def test_cooccurrence(tmpdir, monkeypatch):
         'often\tis\t6\n'
         'often\tas\t6\n'
     )
-
-    with gzip.open(str(output_two)) as f:
-        result_two = f.read().decode('utf-8')
 
     assert sorted(result_two.split(u'\n')) == [
         u'',

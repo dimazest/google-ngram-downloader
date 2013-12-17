@@ -71,7 +71,7 @@ def cooccurrence(
             id2word = list(index)
             items = (u'{}\t{}\t{}\n'.format(id2word[i], id2word[c], str(v)) for (i, c), v in cooccurrence.items())
 
-            with gzip.open(str(output_file), 'wt') as f:
+            with gzip.open(str(output_file), 'wb') as f:
                 if verbose:
                     print('Writing {}'.format(output_file))
                 for item in items:

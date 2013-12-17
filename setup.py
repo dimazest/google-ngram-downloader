@@ -5,16 +5,16 @@ from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 
-class Tox(TestCommand):
+class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        self.test_args = ['--recreate']
+        self.test_args = 'test'
         self.test_suite = True
 
     def run_tests(self):
         #import here, cause outside the eggs aren't loaded
-        import tox
-        errno = tox.cmdline(self.test_args)
+        import pytest
+        errno = pytest.main(self.test_args)
         sys.exit(errno)
 
 
@@ -28,7 +28,7 @@ long_description = (
 
 setup(
     name='google-ngram-downloader',
-    version='3.1',
+    version='3.1.1',
     description='The streaming access to the Google ngram data.',
     long_description=long_description,
     # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -62,6 +62,8 @@ setup(
             'google-ngram-downloader = google_ngram_downloader.__main__:dispatcher.dispatch',
         ],
     },
-    tests_require=['tox'],
-    cmdclass={'test': Tox},
+    tests_require=[
+        'pytest>=2.4.2',
+    ],
+    cmdclass={'test': PyTest},
 )
