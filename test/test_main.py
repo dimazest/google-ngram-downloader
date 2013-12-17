@@ -102,18 +102,19 @@ def test_cooccurrence(tmpdir, monkeypatch):
 
     def read(f_name):
         with gzip.open(str(f_name), mode='rb') as f:
-            return f.read().decode('utf-8')
+            return sorted(f.read().decode('utf-8').split(u'\n'))
 
     result_one, result_two = map(read, tmpdir.listdir())
 
-    assert result_one == (
-        'often\tanalysis\t6\n'
-        'often\tdescribed\t6\n'
-        'often\tis\t6\n'
-        'often\tas\t6\n'
-    )
+    assert result_one == [
+        u'',
+        u'often\tanalysis\t6',
+        u'often\tas\t6',
+        u'often\tdescribed\t6',
+        u'often\tis\t6',
+    ]
 
-    assert sorted(result_two.split(u'\n')) == [
+    assert result_two == [
         u'',
         u'REPETITION\taa\t40',
         u'UNICODE\tу\t46',
