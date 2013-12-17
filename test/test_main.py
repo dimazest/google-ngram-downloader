@@ -104,7 +104,7 @@ def test_cooccurrence(tmpdir, monkeypatch):
         with gzip.open(str(f_name), mode='rb') as f:
             return sorted(f.read().decode('utf-8').split(u'\n'))
 
-    result_one, result_two = map(read, tmpdir.listdir())
+    result_one, result_two = map(read, tmpdir.listdir(sort=True))
 
     assert result_one == [
         u'',
