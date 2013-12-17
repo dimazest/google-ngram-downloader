@@ -1,6 +1,6 @@
+# -*- coding: utf8 -*-
 import gzip
 import zlib
-from itertools import chain
 from contextlib import contextmanager
 
 from requests import Session
@@ -27,7 +27,9 @@ def data():
         b'analysis is often described as\t1991\t1\t1\n',
         b'analysis', b' is often described as\t1992\t2\t1\n',
         b'analysis', b' is often', b' described as\t1993\t3\t1\n',
-        b'c1 c2 WORD c3 c4\t1987\t100\t2\n'
+        b'c1 c2 WORD c3 c4\t1987\t100\t2\n',
+        b'aa aa REPETITION aa aa\t1999\t10\t1\n',
+        b'\xd1\x8e \xd1\x83 UNICODE \xd1\x83 \xd1\x8e\t2002\t23\t3\n',
     )
 
 
@@ -88,7 +90,7 @@ def test_cooccurrence(tmpdir, monkeypatch):
 
         return _open()
 
-    monkeypatch.setattr(gzip, 'open', modked_open)
+    # monkeypatch.setattr(gzip, 'open', modked_open)
     monkeypatch.setattr(util, 'get_indices', lambda ngram_len: ['a'])
 
     cooccurrence.command(
@@ -98,14 +100,27 @@ def test_cooccurrence(tmpdir, monkeypatch):
         ).split()
     )
 
-    assert len(objects) == 8
-    assert '\n'.join(objects) == (
-        'often\tanalysis\t6\n'
-        'often\tdescribed\t6\n'
-        'often\tis\t6\n'
-        'often\tas\t6\n'
-        'WORD\tc1\t100\n'
-        'WORD\tc3\t100\n'
-        'WORD\tc2\t100\n'
-        'WORD\tc4\t100'
-    )
+    def read(f_name):
+        with gzip.open(str(f_name), mode='rb') as f:
+            return sorted(f.read().decode('utf-8').split(u'\n'))
+
+    result_one, result_two = map(read, tmpdir.listdir())
+
+    assert result_one == [
+        u'',
+        u'often\tanalysis\t6',
+        u'often\tas\t6',
+        u'often\tdescribed\t6',
+        u'often\tis\t6',
+    ]
+
+    assert result_two == [
+        u'',
+        u'REPETITION\taa\t40',
+        u'UNICODE\tу\t46',
+        u'UNICODE\tю\t46',
+        u'WORD\tc1\t100',
+        u'WORD\tc2\t100',
+        u'WORD\tc3\t100',
+        u'WORD\tc4\t100',
+    ]

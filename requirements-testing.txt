@@ -1,3 +1,4 @@
 pytest-cov==1.6
 pytest-pep8==1.0.5
 python-coveralls==2.4.2
+tox==1.6.1

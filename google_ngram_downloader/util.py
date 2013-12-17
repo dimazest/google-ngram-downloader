@@ -80,7 +80,12 @@ def count_coccurrence(records, index):
     grouped_records = groupby(records, key=lambda r: r.ngram)
     ngram_counts = ((ngram, sum(r.match_count for r in records)) for ngram, records in grouped_records)
     cooc = (ngram_to_cooc(ngram, count, index) for ngram, count in ngram_counts)
-    return collections.Counter(dict(chain.from_iterable(cooc)))
+
+    counter = collections.Counter()
+    for item, count in chain.from_iterable(cooc):
+        counter[item] += count
+
+    return counter
 
 
 def iter_google_store(ngram_len, verbose=False):
