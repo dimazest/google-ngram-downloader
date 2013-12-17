@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 3.1.1
+-----------
+
+* Non-unique contexts are taken into account inside of an ngram.
+
 Version 3.1
 -----------
 
