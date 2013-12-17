@@ -1,6 +1,7 @@
-import json
+import gzip
 import zlib
 from itertools import chain
+from contextlib import contextmanager
 
 from requests import Session
 
@@ -77,10 +78,17 @@ def test_download(capsys, tmpdir, verbose, err_len, urls):
 def test_cooccurrence(tmpdir, monkeypatch):
     objects = []
 
-    def modked_dump(obj, *args, **kwargs):
-        objects.append(obj)
+    def modked_open(obj, *args, **kwargs):
+        @contextmanager
+        def _open(*args, **kwargs):
+            class MockedGzipFile(object):
+                def writelines(self, lines):
+                    objects.extend(list(lines))
+            yield MockedGzipFile()
 
-    monkeypatch.setattr(json, 'dump', modked_dump)
+        return _open()
+
+    monkeypatch.setattr(gzip, 'open', modked_open)
     monkeypatch.setattr(util, 'get_indices', lambda ngram_len: ['a'])
 
     cooccurrence.command(
@@ -90,17 +98,14 @@ def test_cooccurrence(tmpdir, monkeypatch):
         ).split()
     )
 
-    assert len(objects) == 2
-    obj = list(chain.from_iterable(objects))
-
-    assert len(obj) == 8
-    assert set(obj) == set([
-        (('often', 'analysis'), 6),
-        (('often', 'as'), 6),
-        (('often', 'described'), 6),
-        (('often', 'is'), 6),
-        (('WORD', 'c1'), 100),
-        (('WORD', 'c2'), 100),
-        (('WORD', 'c3'), 100),
-        (('WORD', 'c4'), 100),
-    ])
+    assert len(objects) == 8
+    assert '\n'.join(objects) == (
+        'often\tanalysis\t6\n'
+        'often\tdescribed\t6\n'
+        'often\tis\t6\n'
+        'often\tas\t6\n'
+        'WORD\tc1\t100\n'
+        'WORD\tc3\t100\n'
+        'WORD\tc2\t100\n'
+        'WORD\tc4\t100'
+    )

@@ -56,8 +56,6 @@ def readline_google_store(ngram_len, chunk_size=1024 ** 2, verbose=False):
 
 def ngram_to_cooc(ngram, count, index):
     ngram = ngram.split()
-    # Filter out any annotations. E.g. removes `_NUM` from  `+32_NUM`
-    ngram = tuple(n.split('_')[0] for n in ngram)
 
     middle_index = len(ngram) // 2
     item = ngram[middle_index]

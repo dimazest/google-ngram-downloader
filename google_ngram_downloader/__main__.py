@@ -1,6 +1,5 @@
 import codecs
 import gzip
-import json
 import sys
 from collections import OrderedDict
 from itertools import islice
@@ -70,11 +69,12 @@ def cooccurrence(
                 break
 
             id2word = list(index)
-            items = [((id2word[i], id2word[c]), v) for (i, c), v in cooccurrence.items()]
+            items = ('\t'.join([id2word[i], id2word[c], str(v)]) for (i, c), v in cooccurrence.items())
+
             with gzip.open(str(output_file), 'wt') as f:
                 if verbose:
                     print('Writing {}'.format(output_file))
-                json.dump(items, f, indent=True)
+                f.writelines(items)
 
             postfix += 1
 

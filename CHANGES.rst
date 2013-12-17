@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 3.1
+-----------
+
+* The ``cooccurrence`` command does not perform any ngram modification.
+
 Version 3.0
 -----------
 
