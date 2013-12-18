@@ -90,7 +90,6 @@ def test_cooccurrence(tmpdir, monkeypatch):
 
         return _open()
 
-    # monkeypatch.setattr(gzip, 'open', modked_open)
     monkeypatch.setattr(util, 'get_indices', lambda ngram_len: ['a'])
 
     cooccurrence.command(
