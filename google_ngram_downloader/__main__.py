@@ -36,12 +36,12 @@ def download(
 @command()
 def cooccurrence(
     ngram_len=('n', 2, 'The length of ngrams to be downloaded.'),
-    output=('o', 'downloads/google_ngrams/{ngram_len}_cooccurrence_matrix/', 'The destination folder for downloaded files.'),
+    output=('o', 'downloads/google_ngrams/{ngram_len}_cooccurrence', 'The destination folder for downloaded files.'),
     verbose=('v', False, 'Be verbose.'),
     rewrite=('r', False, 'Always rewrite existing files.'),
     records_in_file=('', 50000000, 'The number of records to be read from the Google store to store in a .json.gz file.')
 ):
-    """Build a cooccurrence matrix based on ngram data."""
+    """Write the cooccurrence frequncis of a word and its contexts."""
     assert ngram_len > 1
     output_dir = local(output.format(ngram_len=ngram_len))
     output_dir.ensure_dir()
