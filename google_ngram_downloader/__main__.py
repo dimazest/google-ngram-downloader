@@ -91,5 +91,4 @@ def readline(
 
     for _, _, records in readline_google_store(ngram_len):
         for record in records:
-            print(record)
-            print('{ngram}\t{year}\t{match_count}\t{volume_count}'.format(**record._asdict()))
+            print(u'{ngram}\t{year}\t{match_count}\t{volume_count}'.format(**record._asdict()))
