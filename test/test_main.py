@@ -5,7 +5,7 @@ from contextlib import contextmanager
 
 from requests import Session
 
-from google_ngram_downloader.__main__ import download, cooccurrence
+from google_ngram_downloader.__main__ import download, cooccurrence, readline
 from google_ngram_downloader import util
 
 import pytest
@@ -77,7 +77,23 @@ def test_download(capsys, tmpdir, verbose, err_len, urls):
     assert len(err.split('\n')) == err_len
 
 
-def test_cooccurrence(tmpdir, monkeypatch):
+def test_readline(capsys, tmpdir):
+    readline.command([])
+
+    out, err = capsys.readouterr()
+
+    assert len(out) == 149868
+    assert not err
+
+
+@pytest.mark.parametrize(
+    'verbose',
+    (
+        (False, ),
+        (True, ),
+    ),
+)
+def test_cooccurrence(tmpdir, monkeypatch, verbose):
     objects = []
 
     def modked_open(obj, *args, **kwargs):
@@ -93,9 +109,10 @@ def test_cooccurrence(tmpdir, monkeypatch):
     monkeypatch.setattr(util, 'get_indices', lambda ngram_len: ['a'])
 
     cooccurrence.command(
-        '-o {tmpdir} -n 5 --records-in-file 3'
+        '-o {tmpdir} -n 5 --records-in-file 3 {verbose}'
         ''.format(
             tmpdir=tmpdir,
+            verbose='-v' if verbose else '',
         ).split()
     )
 

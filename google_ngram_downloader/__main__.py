@@ -1,4 +1,3 @@
-import codecs
 import gzip
 import sys
 from collections import OrderedDict
@@ -88,9 +87,6 @@ def readline(
     lang=('l', "eng", 'Language: eng'),
 ):
     """Print the raw content."""
-
-    # Always write utf8
-    sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
     for _, _, records in readline_google_store(ngram_len, lang=lang):
         for record in records:
