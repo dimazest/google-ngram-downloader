@@ -25,7 +25,7 @@ def download(
     output = local(output.format(ngram_len=ngram_len))
     output.ensure_dir()
 
-    for fname, url, request in iter_google_store(ngram_len, verbose=verbose,lang=lang):
+    for fname, url, request in iter_google_store(ngram_len, verbose=verbose, lang=lang):
         with output.join(fname).open('wb') as f:
             for num, chunk in enumerate(request.iter_content(1024)):
                 if verbose and not divmod(num, 1024)[1]:
