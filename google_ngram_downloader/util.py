@@ -20,9 +20,10 @@ def readline_google_store(ngram_len, lang='eng', indices=None, chunk_size=1024 *
     """Iterate over the data in the Google ngram collectioin.
 
         :param int ngram_len: the length of ngrams to be streamed.
+        :param str lang: the langueage of the ngrams.
+        :param iter indices: the file indices to be downloaded.
         :param int chunk_size: the size the chunks of raw compressed data.
-        :param bool verbose: if `True`, then the debug information is shown to
-        `sys.stderr`.
+        :param bool verbose: if `True`, then the debug information is shown to `sys.stderr`.
 
         :returns: a iterator over triples `(fname, url, records)`
 
@@ -89,7 +90,14 @@ def count_coccurrence(records, index):
 
 
 def iter_google_store(ngram_len, lang="eng", indices=None, verbose=False):
-    """Iterate over the collection files stored at Google."""
+    """Iterate over the collection files stored at Google.
+
+    :param int ngram_len: the length of ngrams to be streamed.
+    :param str lang: the langueage of the ngrams.
+    :param iter indices: the file indices to be downloaded.
+    :param bool verbose: if `True`, then the debug information is shown to `sys.stderr`.
+
+    """
     version = '20120701'
     session = requests.Session()
 

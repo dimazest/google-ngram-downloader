@@ -18,7 +18,11 @@ def download(
     ngram_len=('n', 1, 'The length of ngrams to be downloaded.'),
     output=('o', 'downloads/google_ngrams/{ngram_len}', 'The destination folder for downloaded files.'),
     verbose=('v', False, 'Be verbose.'),
-    lang=('l', "eng", 'Language: eng'),
+    lang=(
+        'l',
+        'eng',
+        'Language. [eng|eng-us|eng-gb|eng-fiction|chi-sim|fre|ger|heb|ita|rus|spa]',
+    ),
 ):
     """Download The Google Books Ngram Viewer dataset version 20120701."""
     output = local(output.format(ngram_len=ngram_len))
@@ -39,10 +43,18 @@ def cooccurrence(
     output=('o', 'downloads/google_ngrams/{ngram_len}_cooccurrence', 'The destination folder for downloaded files.'),
     verbose=('v', False, 'Be verbose.'),
     rewrite=('r', False, 'Always rewrite existing files.'),
-    records_in_file=('', 50000000, 'The number of records to be read from the Google store to store in a .json.gz file.'),
-    lang=('l', "eng", 'Language: eng'),
+    records_in_file=(
+        '',
+        50000000,
+        'The number of records to be read from the Google store to store in a .json.gz file.',
+    ),
+    lang=(
+        'l',
+        'eng',
+        'Language. [eng|eng-us|eng-gb|eng-fiction|chi-sim|fre|ger|heb|ita|rus|spa]',
+    ),
 ):
-    """Write the cooccurrence frequncis of a word and its contexts."""
+    """Write the cooccurrence frequencies of a word and its contexts."""
     assert ngram_len > 1
     output_dir = local(output.format(ngram_len=ngram_len))
     output_dir.ensure_dir()
@@ -84,7 +96,11 @@ def cooccurrence(
 @command()
 def readline(
     ngram_len=('n', 2, 'The length of ngrams to be downloaded.'),
-    lang=('l', "eng", 'Language: eng'),
+    lang=(
+        'l',
+        'eng',
+        'Language. [eng|eng-us|eng-gb|eng-fiction|chi-sim|fre|ger|heb|ita|rus|spa]',
+    ),
 ):
     """Print the raw content."""
 
