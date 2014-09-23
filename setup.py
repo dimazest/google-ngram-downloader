@@ -36,12 +36,12 @@ long_description = '\n'.join(
 
 setup(
     name='google-ngram-downloader',
-    version='3.1.1',
+    version='4.0.0',
     description='The streaming access to the Google ngram data.',
     long_description=long_description,
     # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',

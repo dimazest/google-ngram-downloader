@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 4.0.0
+
+* Added 'indices' keyword. Thanks to neocortex.
+* Added 'language' flat. Thanks to Ray Powell (rpowellgit).
+
 Version 3.1.1
 -------------
 
