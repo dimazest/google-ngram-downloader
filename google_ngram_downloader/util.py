@@ -16,7 +16,7 @@ FILE_TEMPLATE = 'googlebooks-{lang}-all-{ngram_len}gram-{version}-{index}.gz'
 Record = collections.namedtuple('Record', 'ngram year match_count volume_count')
 
 
-def readline_google_store(ngram_len, lang='eng', chunk_size=1024 ** 2, verbose=False):
+def readline_google_store(ngram_len, lang='eng', indices=None, chunk_size=1024 ** 2, verbose=False):
     """Iterate over the data in the Google ngram collectioin.
 
         :param int ngram_len: the length of ngrams to be streamed.
@@ -28,7 +28,7 @@ def readline_google_store(ngram_len, lang='eng', chunk_size=1024 ** 2, verbose=F
 
     """
 
-    for fname, url, request in iter_google_store(ngram_len, verbose=verbose,lang=lang):
+    for fname, url, request in iter_google_store(ngram_len, verbose=verbose, lang=lang, indices=indices):
         dec = zlib.decompressobj(32 + zlib.MAX_WBITS)
 
         def lines():
@@ -88,12 +88,14 @@ def count_coccurrence(records, index):
     return counter
 
 
-def iter_google_store(ngram_len, lang="eng", verbose=False):
+def iter_google_store(ngram_len, lang="eng", indices=None, verbose=False):
     """Iterate over the collection files stored at Google."""
     version = '20120701'
     session = requests.Session()
 
-    for index in get_indices(ngram_len):
+    indices = get_indices(ngram_len) if indices is None else indices
+
+    for index in indices:
         fname = FILE_TEMPLATE.format(
             lang=lang,
             ngram_len=ngram_len,
