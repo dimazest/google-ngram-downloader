@@ -12,7 +12,7 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
+        # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(self.test_args)
         sys.exit(errno)
@@ -20,20 +20,28 @@ class PyTest(TestCommand):
 
 dirname = os.path.dirname(__file__)
 
-long_description = (
-    open(os.path.join(dirname, 'README.rst')).read() + '\n' +
-    open(os.path.join(dirname, 'CHANGES.rst')).read()
+
+def read_file(f_name):
+    with open(f_name) as f:
+        return f.read()
+
+
+long_description = '\n'.join(
+    [
+        read_file(os.path.join(dirname, 'README.rst')),
+        read_file(os.path.join(dirname, 'CHANGES.rst')),
+    ]
 )
 
 
 setup(
     name='google-ngram-downloader',
-    version='3.1.1',
+    version='4.0.0',
     description='The streaming access to the Google ngram data.',
     long_description=long_description,
     # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
@@ -41,14 +49,21 @@ setup(
         'Operating System :: Microsoft :: Windows',
         'Operating System :: MacOS :: MacOS X',
         'Topic :: Utilities',
+        'Topic :: Text Processing :: Linguistic',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3'
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
     ],
     keywords='',
     author='Dmitrijs Milajevs',
     author_email='dimazest@gmail.com',
     url='https://github.com/dimazest/google-ngram-downloader',
-    license='MIT license',
+    license='MIT License',
     packages=find_packages(exclude=['ez_setup', 'examples', 'test']),
     include_package_data=True,
     zip_safe=False,
