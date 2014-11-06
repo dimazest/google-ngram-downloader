@@ -20,6 +20,10 @@
     :target: https://crate.io/packages/google-ngram-downloader/
     :alt: Number of PyPI downloads
 
+.. image:: https://zenodo.org/badge/4321/dimazest/google-ngram-downloader.png
+    :target: http://dx.doi.org/10.5281/zenodo.11884
+    :alt: Zenodo doi.
+
 `The Google Books Ngram Viewer dataset`__ is a freely available resource under
 a `Creative Commons Attribution 3.0 Unported License`__ which provides ngram
 counts over books scanned by Google.
