@@ -1,6 +1,12 @@
 Changes
 =======
 
+Version 4.0.1
+-------------
+
+* Citation information.
+* Tests are correctly packaged for a release.
+
 Version 4.0.0
 -------------
 
