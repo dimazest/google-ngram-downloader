@@ -8,18 +8,6 @@
 .. image:: https://coveralls.io/repos/dimazest/google-ngram-downloader/badge.png?branch=master
     :target: https://coveralls.io/r/dimazest/google-ngram-downloader?branch=master
 
-.. image:: https://requires.io/github/dimazest/google-ngram-downloader/requirements.png?branch=master
-   :target: https://requires.io/github/dimazest/google-ngram-downloader/requirements/?branch=master
-   :alt: Requirements Status
-
-.. image:: https://pypip.in/v/google-ngram-downloader/badge.png
-    :target: https://crate.io/packages/google-ngram-downloader/
-    :alt: Latest PyPI version
-
-.. image:: https://pypip.in/d/google-ngram-downloader/badge.png
-    :target: https://crate.io/packages/google-ngram-downloader/
-    :alt: Number of PyPI downloads
-
 .. image:: https://zenodo.org/badge/4321/dimazest/google-ngram-downloader.png
     :target: http://dx.doi.org/10.5281/zenodo.11884
     :alt: Zenodo doi.
