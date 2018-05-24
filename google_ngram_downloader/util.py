@@ -18,7 +18,7 @@ Record = collections.namedtuple('Record', 'ngram year match_count volume_count')
 
 class StreamInterruptionError(Exception):
     """Raised when a data stream ends before the end of the file"""
-    
+
     def __init__(self, url, message):
         self.url = url
         self.message = message
