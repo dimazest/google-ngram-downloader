@@ -16,6 +16,14 @@ FILE_TEMPLATE = 'googlebooks-{lang}-all-{ngram_len}gram-{version}-{index}.gz'
 Record = collections.namedtuple('Record', 'ngram year match_count volume_count')
 
 
+class StreamInterruptionError(Exception):
+    """Raised when a data stream ends before the end of the file"""
+
+    def __init__(self, url, message):
+        self.url = url
+        self.message = message
+
+
 def readline_google_store(ngram_len, lang='eng', indices=None, chunk_size=1024 ** 2, verbose=False):
     """Iterate over the data in the Google ngram collectioin.
 
@@ -50,7 +58,11 @@ def readline_google_store(ngram_len, lang='eng', indices=None, chunk_size=1024 *
                     other = map(int, data[1:])
                     yield Record(ngram, *other)
 
-            assert not last
+            if last:
+                raise StreamInterruptionError(
+                    url,
+                    "Data stream ended on a non-empty line. This might be due "
+                    "to temporary networking problems.")
 
         yield fname, url, lines()
 

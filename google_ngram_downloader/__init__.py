@@ -1,1 +1,1 @@
-from .util import readline_google_store
+from .util import readline_google_store, StreamInterruptionError
