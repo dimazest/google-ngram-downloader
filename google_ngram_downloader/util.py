@@ -135,7 +135,14 @@ def iter_google_store(ngram_len, lang="eng", indices=None, verbose=False):
             sys.stderr.flush()
 
         request = session.get(url, stream=True)
-        assert request.status_code == 200
+        if request.status_code != 200:
+            sys.stderr.write(
+                'Error Downloading {url} '
+                ''.format(
+                    url=url,
+                ),
+            )
+            continue
 
         yield fname, url, request
 

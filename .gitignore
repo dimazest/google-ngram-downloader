@@ -12,6 +12,7 @@ dist/*
 downloads/*
 
 .py*_env/
+env/
 
 .coverage
 htmlcov/
