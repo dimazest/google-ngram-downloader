@@ -135,7 +135,14 @@ def iter_google_store(ngram_len, lang="eng", indices=None, verbose=False):
             sys.stderr.flush()
 
         request = session.get(url, stream=True)
-        assert request.status_code == 200
+        if request.status_code != 200:
+            sys.stderr.write(
+                'Error Downloading {url} '
+                ''.format(
+                    url=url,
+                ),
+            )
+            continue
 
         yield fname, url, request
 
@@ -185,8 +192,6 @@ def get_indices(ngram_len):
         ym yn yo yp yq yr ys yt yu yv yw yx yy yz z_ za zb zc zd ze zf zg zh zi
         zj zk zl zm zn zo zp zq zr zs zt zu zv zw zx zy zz
 
-    Nothe, there is not index "qk" for 5grams.
-
     See http://storage.googleapis.com/books/ngrams/books/datasetsv2.html for
     more details.
 
@@ -199,8 +204,6 @@ def get_indices(ngram_len):
 
     else:
         letter_indices = ((''.join(i) for i in product(ascii_lowercase, ascii_lowercase + '_')))
-        if ngram_len == 5:
-            letter_indices = (l for l in letter_indices if l != 'qk')
 
         other_indices += (
             '_ADJ_',
