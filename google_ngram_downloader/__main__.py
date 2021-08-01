@@ -1,5 +1,6 @@
 import gzip
 import sys
+import os
 from collections import OrderedDict
 from itertools import islice
 
@@ -29,6 +30,15 @@ def download(
     output.ensure_dir()
 
     for fname, url, request in iter_google_store(ngram_len, verbose=verbose, lang=lang):
+
+        if os.path.isfile(output.join(fname)):
+            server_length = int(request.raw.headers['Content-Length'])
+            local_length = os.stat(output.join(fname)).st_size
+            if server_length == local_length:
+                print('Skipping', fname, ': already have', local_length, 'bytes')
+                request.close()
+                continue
+
         with output.join(fname).open('wb') as f:
             for num, chunk in enumerate(request.iter_content(1024)):
                 if verbose and not divmod(num, 1024)[1]:
